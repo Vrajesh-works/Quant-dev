@@ -1,6 +1,3 @@
-# Complete Docker Kafka Helper
-
-
 import subprocess
 import sys
 import time
@@ -27,29 +24,28 @@ class DockerKafkaManager:
         print("Starting Kafka services...")
         
         if not self.is_docker_running():
-            print("Docker is not running. Please start Docker Desktop first.")
+            print("ERROR: Docker is not running. Please start Docker Desktop first.")
             return False
         
         if not self.run_command("docker-compose up -d"):
-            print("Failed to start services")
+            print("ERROR: Failed to start services")
             return False
         
-        print("Services started, waiting for Kafka...")
+        print("SUCCESS: Services started, waiting for Kafka...")
         
-        # Wait for Kafka to be ready
         for i in range(30):
             if self.test_kafka_connection():
-                print("Kafka is ready!")
+                print("SUCCESS: Kafka is ready!")
                 return True
             time.sleep(2)
         
-        print("Kafka failed to start")
+        print("ERROR: Kafka failed to start")
         return False
     
     def stop_services(self):
         print("Stopping services...")
         if self.run_command("docker-compose down"):
-            print("Services stopped")
+            print("SUCCESS: Services stopped")
             return True
         return False
     
@@ -58,7 +54,7 @@ class DockerKafkaManager:
         print("-" * 30)
         
         if not self.is_docker_running():
-            print("Docker is not running")
+            print("ERROR: Docker is not running")
             return False
         
         # Check containers
@@ -71,18 +67,18 @@ class DockerKafkaManager:
                 print("Container Status:")
                 print(result.stdout)
             else:
-                print("No Kafka containers running")
+                print("ERROR: No Kafka containers running")
                 return False
         except:
-            print("Failed to check container status")
+            print("ERROR: Failed to check container status")
             return False
         
         # Test Kafka connection
         if self.test_kafka_connection():
-            print("Kafka connection: OK")
-            print(f"Topic '{self.topic_name}': Available")
+            print("SUCCESS: Kafka connection OK")
+            print(f"SUCCESS: Topic '{self.topic_name}' available")
         else:
-            print("Kafka connection: Failed")
+            print("ERROR: Kafka connection failed")
             return False
         
         return True
@@ -112,12 +108,12 @@ class DockerKafkaManager:
             )
             
             admin_client.create_topics([topic])
-            print(f"Topic '{self.topic_name}' created")
+            print(f"SUCCESS: Topic '{self.topic_name}' created")
             
         except TopicAlreadyExistsError:
-            print(f"Topic '{self.topic_name}' already exists")
+            print(f"SUCCESS: Topic '{self.topic_name}' already exists")
         except Exception as e:
-            print(f"Failed to create topic: {e}")
+            print(f"ERROR: Failed to create topic: {e}")
             return False
         finally:
             admin_client.close()
@@ -143,14 +139,14 @@ class DockerKafkaManager:
             producer.send(self.topic_name, {"test": "setup"})
             producer.flush()
             producer.close()
-            print("Setup test passed")
+            print("SUCCESS: Setup test passed")
         except Exception as e:
-            print(f"Setup test failed: {e}")
+            print(f"ERROR: Setup test failed: {e}")
             return False
         
         print("\n" + "=" * 50)
-        print("Kafka setup complete!")
-        print("🔌 Kafka broker: localhost:9092")
+        print("SUCCESS: Kafka setup complete!")
+        print("Kafka broker: localhost:9092")
         print(f"Topic ready: {self.topic_name}")
         print("\nYou can now run:")
         print("  python kafka_producer.py")
@@ -193,9 +189,9 @@ def main():
     
     elif command == "test":
         if manager.test_kafka_connection():
-            print("Kafka connection successful")
+            print("SUCCESS: Kafka connection successful")
         else:
-            print("Kafka connection failed")
+            print("ERROR: Kafka connection failed")
             sys.exit(1)
     
     else:
