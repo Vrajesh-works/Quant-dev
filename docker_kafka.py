@@ -49,7 +49,7 @@ class DockerKafkaManager:
     def stop_services(self):
         print("Stopping services...")
         if self.run_command("docker-compose down"):
-            print("✅ Services stopped")
+            print("Services stopped")
             return True
         return False
     
