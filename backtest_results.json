@@ -5,13 +5,13 @@
     "theta_queue": 0.1
   },
   "optimized": {
-    "total_cash": 1113715.0,
-    "avg_fill_px": 222.743
+    "total_cash": 1115113.9999999998,
+    "avg_fill_px": 223.02279999999996
   },
   "baselines": {
     "best_ask": {
-      "total_cash": 10250.318,
-      "avg_fill_px": 222.833
+      "total_cash": 133861.8,
+      "avg_fill_px": 223.10299999999998
     },
     "twap": {
       "total_cash": 0.0,
@@ -23,7 +23,7 @@
     }
   },
   "savings_vs_baselines_bps": {
-    "best_ask": -1076517.5109689282,
+    "best_ask": -73303.37706500285,
     "twap": 0.0,
     "vwap": 0.0
   }

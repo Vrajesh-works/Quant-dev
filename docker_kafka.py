@@ -1,4 +1,4 @@
-# Minimal Docker Kafka Helper
+# Complete Docker Kafka Helper
 
 
 import subprocess
@@ -53,6 +53,40 @@ class DockerKafkaManager:
             return True
         return False
     
+    def show_status(self):
+        print("Docker Kafka Status:")
+        print("-" * 30)
+        
+        if not self.is_docker_running():
+            print("Docker is not running")
+            return False
+        
+        # Check containers
+        try:
+            result = subprocess.run(
+                ["docker", "ps", "--filter", "name=kafka", "--filter", "name=zookeeper", "--format", "table {{.Names}}\t{{.Status}}\t{{.Ports}}"],
+                capture_output=True, text=True
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                print("Container Status:")
+                print(result.stdout)
+            else:
+                print("No Kafka containers running")
+                return False
+        except:
+            print("Failed to check container status")
+            return False
+        
+        # Test Kafka connection
+        if self.test_kafka_connection():
+            print("Kafka connection: OK")
+            print(f"Topic '{self.topic_name}': Available")
+        else:
+            print("Kafka connection: Failed")
+            return False
+        
+        return True
+    
     def test_kafka_connection(self):
         try:
             admin_client = KafkaAdminClient(
@@ -78,12 +112,12 @@ class DockerKafkaManager:
             )
             
             admin_client.create_topics([topic])
-            print(f"✅ Topic '{self.topic_name}' created")
+            print(f"Topic '{self.topic_name}' created")
             
         except TopicAlreadyExistsError:
-            print(f"✅ Topic '{self.topic_name}' already exists")
+            print(f"Topic '{self.topic_name}' already exists")
         except Exception as e:
-            print(f"❌ Failed to create topic: {e}")
+            print(f"Failed to create topic: {e}")
             return False
         finally:
             admin_client.close()
@@ -129,7 +163,12 @@ def main():
     
     if len(sys.argv) < 2:
         print("Usage: python docker_kafka.py [command]")
-        print("Commands: setup, start, stop, test")
+        print("Commands:")
+        print("  setup   - Complete setup (start + create topic + test)")
+        print("  start   - Start Kafka services")
+        print("  stop    - Stop Kafka services") 
+        print("  status  - Show service status")
+        print("  test    - Test Kafka connection")
         return
     
     command = sys.argv[1].lower()
@@ -148,6 +187,10 @@ def main():
         success = manager.stop_services()
         sys.exit(0 if success else 1)
     
+    elif command == "status":
+        success = manager.show_status()
+        sys.exit(0 if success else 1)
+    
     elif command == "test":
         if manager.test_kafka_connection():
             print("Kafka connection successful")
@@ -157,6 +200,7 @@ def main():
     
     else:
         print(f"Unknown command: {command}")
+        print("Available commands: setup, start, stop, status, test")
         sys.exit(1)
 
 if __name__ == "__main__":
