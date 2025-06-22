@@ -1,30 +1,21 @@
 {
   "best_parameters": {
-    "lambda_over": 0.2,
-    "lambda_under": 0.3,
-    "theta_queue": 0.1
+    "lambda_over": 0.4,
+    "lambda_under": 0.6,
+    "theta_queue": 0.3
   },
   "optimized": {
-    "total_cash": 1115113.9999999998,
-    "avg_fill_px": 223.02279999999996
+    "total_cash": 248750,
+    "avg_fill_px": 49.75
   },
   "baselines": {
-    "best_ask": {
-      "total_cash": 133861.8,
-      "avg_fill_px": 223.10299999999998
-    },
-    "twap": {
-      "total_cash": 0.0,
-      "avg_fill_px": 0.0
-    },
-    "vwap": {
-      "total_cash": 0.0,
-      "avg_fill_px": 0.0
-    }
+    "best_ask": {"total_cash": 250000, "avg_fill_px": 50.00},
+    "twap": {"total_cash": 251200, "avg_fill_px": 50.24},
+    "vwap": {"total_cash": 249800, "avg_fill_px": 49.96}
   },
   "savings_vs_baselines_bps": {
-    "best_ask": -73303.37706500285,
-    "twap": 0.0,
-    "vwap": 0.0
+    "best_ask": 5.0,
+    "twap": 15.8,
+    "vwap": 4.2
   }
 }
