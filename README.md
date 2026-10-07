@@ -1,5 +1,7 @@
 # Smart Order Router (SOR)
 
+[![CI](https://github.com/Vrajesh-works/Quant-dev/actions/workflows/ci.yml/badge.svg)](https://github.com/Vrajesh-works/Quant-dev/actions/workflows/ci.yml)
+
 Optimal order execution across multiple trading venues using the Cont-Kukanov cost model,
 with real-time market data streaming via Kafka and a backtesting engine.
 
