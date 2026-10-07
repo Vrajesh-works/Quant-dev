@@ -50,6 +50,8 @@ streamlit run streamlit_app.py
 ## Full system (with Kafka streaming)
 
 ```bash
+pip install -r requirements-full.txt
+
 # Terminal 1: start Kafka and the market-data producer
 python docker_kafka.py setup
 python kafka_producer.py
