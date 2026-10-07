@@ -3,7 +3,8 @@
 Optimal order execution across multiple trading venues using the Cont-Kukanov cost model,
 with real-time market data streaming via Kafka and a backtesting engine.
 
-**Live interactive demo:** coming soon (deploying to Streamlit Cloud)
+**Live interactive demo:** [SOR Lab on Streamlit](https://quant-dev.streamlit.app/)
+_(run the allocator, tune the risk parameters, and compare against TWAP / VWAP / Best-Ask, all in the browser)_
 
 ## Overview
 
