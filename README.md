@@ -4,7 +4,25 @@ Optimal order execution across multiple trading venues using the Cont-Kukanov co
 with real-time market data streaming via Kafka and a backtesting engine.
 
 **Live interactive demo:** [SOR Lab on Streamlit](https://quant-dev.streamlit.app/)
-_(run the allocator, tune the risk parameters, and compare against TWAP / VWAP / Best-Ask, all in the browser)_
+_(run the allocator on live crypto books, tune the risk parameters, and compare against TWAP / VWAP / POV / Almgren-Chriss, all in the browser)_
+
+## What this is not
+
+Most Cont-Kukanov implementations online are the same interview trial task:
+a 5000-share brute-force allocator with Best-Ask/TWAP/VWAP baselines on
+synthetic data. This project goes further:
+
+- **Live fragmented markets** - real level-2 books from Binance, Coinbase
+  and Kraken (free public endpoints, no API key) as the venues
+- **TCA** - implementation shortfall decomposed into spread, fees, delay,
+  modeled market impact and opportunity cost (Perold / Wagner-Edwards)
+- **Square-root market impact** - temporary + permanent impact, so splitting
+  across venues is genuinely optimal instead of decorative
+- **Institutional benchmarks** - POV and the Almgren-Chriss optimal
+  trajectory alongside TWAP/VWAP/Best-Ask, all with fill guarantees
+- **Order-book depth visualization** - cumulative depth per venue
+- **pytest suite + CI** - 48 tests covering the allocator, benchmarks, TCA
+  and impact model
 
 ## Overview
 
@@ -35,16 +53,27 @@ Market Data Simulation --> Kafka Streaming --> Backtester & Allocator --> Benchm
 ### Components
 
 - **allocator.py** - `ContKukanovAllocator`: exhaustive-search optimizer over venue splits (pure Python, no dependencies)
-- **benchmark_strategies.py** - TWAP, VWAP, and Best-Ask baselines for comparison
+- **benchmark_strategies.py** - TWAP, VWAP, POV, Almgren-Chriss and Best-Ask baselines, all recording per-fill details
+- **tca.py** - implementation-shortfall decomposition (spread, fees, delay, modeled impact, opportunity cost)
+- **market_impact.py** - square-root temporary/permanent market impact model
+- **crypto_feed.py** - live L2 books from Binance / Coinbase / Kraken public endpoints (no API key)
 - **backtest.py** - backtesting engine: consumes Kafka snapshots, runs the parameter grid search
 - **kafka_producer.py** / **docker_kafka.py** - market-data simulator and Kafka/Docker orchestration
-- **streamlit_app.py** - interactive web demo: edit the venue book, tune parameters, run the optimizer live
+- **streamlit_app.py** - interactive web demo: live or synthetic books, depth charts, optimizer, TCA panel, benchmarks
+- **tests/** - pytest suite (48 tests)
 
 ## Try the demo locally
 
 ```bash
 pip install -r requirements.txt
 streamlit run streamlit_app.py
+```
+
+Run the tests:
+
+```bash
+pip install pytest
+pytest tests/ -q
 ```
 
 ## Full system (with Kafka streaming)

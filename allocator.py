@@ -8,7 +8,14 @@ class Venue:
     ask: float
     ask_size: int
     fee: float = 0.003  
-    rebate: float = 0.002  
+    rebate: float = 0.002
+    bid: float = 0.0  # optional; used for spread/mid attribution in TCA
+
+    @property
+    def mid(self) -> float:
+        if self.bid > 0:
+            return (self.ask + self.bid) / 2
+        return self.ask  
 
 class ContKukanovAllocator:
     #Implements the Cont-Kukanov optimal order allocation algorithm
@@ -46,6 +53,19 @@ class ContKukanovAllocator:
             if cost < best_cost:
                 best_cost = cost
                 best_split = alloc
+
+        if best_cost == float('inf') and splits:
+            # Exact fill is impossible (thin liquidity): fall back to the
+            # deepest available fill, cheapest among the max-fill splits.
+            # (A pure cost-minimizer would fill nothing here because the
+            # penalties are calibrated for ranking full fills, not for the
+            # fill-vs-no-fill decision, so maximize fill first.)
+            best_fill = -1
+            for alloc in splits:
+                filled = sum(alloc)
+                cost = self._compute_cost(alloc, venues, order_size)
+                if filled > best_fill or (filled == best_fill and cost < best_cost):
+                    best_fill, best_cost, best_split = filled, cost, alloc
         
         return best_split, best_cost
     
